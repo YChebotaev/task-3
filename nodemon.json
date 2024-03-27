@@ -1,0 +1,8 @@
+{
+  "watch": [
+    "index.ts",
+    "src/**/*"
+  ],
+  "ext": "ts,json",
+  "exec": "vite build"
+}

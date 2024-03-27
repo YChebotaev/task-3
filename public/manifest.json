@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "Task-3 SIP Phone",
+  "version": "1",
+  "description": "A simple SIP Phone using sipjs",
+  "icons": {
+    "48": "assets/icons/phone-48.png",
+    "128": "assets/icons/phone-128.png"
+  },
+  "author": "yury.79120345101@gmail.com",
+  "permissions": [
+    "sidePanel",
+    "storage"
+  ],
+  "options_page": "src/options/index.html",
+  "side_panel": {
+    "default_path": "src/sidePanel/index.html"
+  }
+}
