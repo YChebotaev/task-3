@@ -3,9 +3,9 @@ import {
   List,
   ListItem,
   ListItemDecorator,
-  ListItemButton,
-  Button,
+  ListItemContent,
   IconButton,
+  Typography,
 } from "@mui/joy";
 import { Phone, PhoneCallback, PhoneForwarded } from "@mui/icons-material";
 import { useHistory } from "../../hooks/useHistory";
@@ -37,7 +37,9 @@ export const HistoryList: FC = () => {
             {direction === "outgoing" && <PhoneForwarded />}
             {direction === "incoming" && <PhoneCallback />}
           </ListItemDecorator>
-          {phone}
+          <ListItemContent>
+            <Typography noWrap>{phone}</Typography>
+          </ListItemContent>
         </ListItem>
       ))}
     </List>

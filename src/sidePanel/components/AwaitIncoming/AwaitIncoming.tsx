@@ -29,6 +29,9 @@ export const AwaitIncoming: FC = () => {
     }) => {
       session.addListener("ended", onEnded);
       session.addListener("accepted", onAccepted);
+      session.addListener("trackadded", () => {
+        console.log("!!!", "trackAdded", "!!!");
+      });
 
       setHistory((history) =>
         history.concat({

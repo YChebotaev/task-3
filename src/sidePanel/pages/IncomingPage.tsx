@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, type FC } from "react";
+import { useEffect, useState, useMemo, type FC, useRef } from "react";
 import { Button } from "@mui/joy";
 import { useNavigate } from "react-router-dom";
 import { BullseyeLayout } from "../layouts/BullseyeLayout";
@@ -8,6 +8,14 @@ import { useSession } from "../hooks/useSession";
 export const IncomingPage: FC = () => {
   const navigate = useNavigate();
   const [session, setSession] = useSession();
+  const [audio] = useState(() => {
+    const audio = new Audio();
+
+    audio.autoplay = true;
+    audio.crossOrigin = "anonymous";
+
+    return audio;
+  });
   const [state, setState] = useState<
     "init" | "accepted" | "confirmed" | "failed" | "ended"
   >("init");
@@ -24,22 +32,35 @@ export const IncomingPage: FC = () => {
     const onAccepted = () => {
       setState("accepted");
     };
-    const onConfirmed = () => {
+    const onConfirmed = (...args) => {
       setState("confirmed");
+    };
+    const onConnectionAddStream = (e) => {
+      audio.srcObject = Reflect.get(e, "stream") as MediaStream;
+      audio.play();
     };
 
     session.addListener("ended", onEnded);
     session.addListener("failed", onFailed);
     session.addListener("accepted", onAccepted);
     session.addListener("confirmed", onConfirmed);
+    session.connection.addEventListener("addstream", onConnectionAddStream);
+
+    document.body.insertBefore(audio, null);
 
     return () => {
-      setSession(null)
+      setSession(null);
 
       session.removeListener("ended", onEnded);
       session.removeListener("failed", onFailed);
       session.removeListener("accepted", onAccepted);
       session.removeListener("confirmed", onConfirmed);
+      session.connection.removeEventListener(
+        "addstream",
+        onConnectionAddStream,
+      );
+
+      audio.remove();
     };
   }, [session]);
 

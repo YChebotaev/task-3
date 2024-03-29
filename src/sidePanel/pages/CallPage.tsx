@@ -10,6 +10,14 @@ import { Timer } from "../components/Timer";
 export const CallPage: FC = () => {
   const navigate = useNavigate();
   const [ua] = useUA();
+  const [audio] = useState(() => {
+    const audio = new Audio();
+
+    audio.autoplay = true;
+    audio.crossOrigin = "anonymous";
+
+    return audio;
+  });
   const [searchParams] = useSearchParams();
   const phone = searchParams.get("phone");
   const [_, setHistory] = useHistory();
@@ -51,11 +59,18 @@ export const CallPage: FC = () => {
     const onConfirmed = () => {
       setState("confirmed");
     };
+    const onConnectionAddStream = (e) => {
+      audio.srcObject = Reflect.get(e, "stream") as MediaStream;
+      audio.play();
+    };
 
     session.addListener("ended", onEnded);
     session.addListener("failed", onFailed);
     session.addListener("accepted", onAccepted);
     session.addListener("confirmed", onConfirmed);
+    session.connection.addEventListener("addstream", onConnectionAddStream);
+
+    document.body.insertBefore(audio, null);
 
     return () => {
       setSession(null);
@@ -64,6 +79,12 @@ export const CallPage: FC = () => {
       session.removeListener("failed", onFailed);
       session.removeListener("accepted", onAccepted);
       session.removeListener("confirmed", onConfirmed);
+      session.connection.removeEventListener(
+        "addstream",
+        onConnectionAddStream,
+      );
+
+      audio.remove();
     };
   }, [ua, phone]);
 
